@@ -1,27 +1,22 @@
-複数ログインを実現するproxyのサンプル実装
-========
-
-### 目的
-
-- マルチログインに対応していないサーバに対して、マルチログインを実現する
-- クライアント側でどのユーザのリクエストとして送信するかを制御できる
-- 本物のセッションIDはクライアントのjsから触れないようにする
-
-
-### 設定
-
-```
-{
-    port: 3000, // 起動ポート
-    dest: "http://example.com/" // proxy先
-}
-```
-
-### セッション作成
-
-```js
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+<button id="login">ログイン</button>
+<button id="load">取得</button>
+<div id="result"></div>
+</body>
+<script type="text/javascript">
 var login_a = null;
 var login_b = null;
+
+var login = document.getElementById('login');
+var load = document.getElementById('load')
+var result = document.getElementById('result');
+
+login.onclick = function () {
 
 // login by user_a
 fetch("/login",{
@@ -35,6 +30,7 @@ fetch("/login",{
 })
 .then( (response) =>{
     login_a = response.headers.get("X-Multi-Login-UUID");
+    result.innerText += "login user a \n";
 });
 
 // login by user_b
@@ -49,12 +45,13 @@ fetch("/login",{
 })
 .then( (response) =>{
     login_b = response.headers.get("X-Multi-Login-UUID");;
+    result.innerText += "login user b \n";
 });
-```
 
-### セッション利用
+}
 
-```
+load.onclick = function () {
+
 // get user_a
 fetch("/items", {
     headers:{
@@ -65,7 +62,7 @@ fetch("/items", {
 }).then( (response) => {
     return response.json();
 }).then( (json) => {
-    console.log("user a :" + JSON.stringify(json));
+    result.innerText += "user a :" + JSON.stringify(json) + "\n";
 });
 
 
@@ -79,12 +76,9 @@ fetch("/items", {
 }).then( (response) => {
     return response.json();
 }).then( (json) => {
-    console.log("user b :" + JSON.stringify(json));
+    result.innerText += "user b :" + JSON.stringify(json) + "\n";
 });
-```
 
-
-
-
-
-
+}
+</script>
+</html>

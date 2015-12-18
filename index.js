@@ -48,6 +48,9 @@ function serverStart(port, dest){
     var app = express();
     app.use(bodyParser.json());
 
+    app.get("/", (req, res) => {
+        res.sendFile(__dirname + "/index.html");
+    })
 
     app.all("*", (req, res) => {
 
